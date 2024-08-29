@@ -18,4 +18,4 @@ emm_plot = DataFrame([collect((tstart-3):(tend-3)) emm_tot[tstart:tend,1] repeat
     emm_plot  |>
 @vlplot(mark={:line},
     x={:Hour,title="Time Step (hours)",labels="Zone:n",axis={values=tstart:24:tend}}, y={:MW,title="Emmissions (Tons)",type="quantitative"},
-    color={"Zone:n"},width=845,height=400,title="Emmissions per Time Step by Zone")
+    color={"Zone:n"},width=845,height=400,title="Emmissions per Time Step")

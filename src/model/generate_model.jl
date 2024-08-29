@@ -237,7 +237,7 @@ function generate_model(setup::Dict, inputs::Dict, OPTIMIZER::MOI.OptimizerWithA
     #          + incoming power flows - outgoing power flows - flow losses - charge of heat storage + generation from NACC
     @constraint(EP,
         cPowerBalance[t = 1:T, z = 1:Z],
-        EP[:ePowerBalance][t, z]==inputs["pD"][t, z])
+        EP[:ePowerBalance][t, z] >=inputs["pD"][t, z])
 
     ## Record pre-solver time
     presolver_time = time() - presolver_start_time
