@@ -58,7 +58,7 @@ T = inputs["T"]
 @constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y])
 
 @expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], 100 * vBackup_fuel_capacity[y])
-@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], 100 * vBackup_top_up[y] + 100 * vBackup_emergency_purchase)
+@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], 100 * vBackup_top_up[y] + 100 * sum(myinputs["omega"][t] * vBackup_emergency_purchase[y,t]))
 
 @expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
 @expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
@@ -68,7 +68,7 @@ if MultiStage == 1
     # OPEX multiplier scales fixed costs to account for multiple years between two model stages
     # We divide by OPEXMULT since we are going to multiply the entire objective function by this term later,
     # and we have already accounted for multiple years between stages for fixed costs.
-    add_to_expression!(EP[:eObj], 1 / inputs["CAPEXMULT"], eBackup_Total_CFix)
+    add_to_expression!(EP[:eObj], 1 / inputs["CAPEXMULT"], eBackup_Total_CFix) #capex mult maybe doesn't exist
     add_to_expression!(EP[:eObj], 1 / inputs["OPEXMULT"], eBackup_Total_CVar)
 else
     add_to_expression!(EP[:eObj], eBackup_Total_CFix)
