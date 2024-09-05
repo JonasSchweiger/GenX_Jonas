@@ -9,9 +9,7 @@ pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
 
-function get_settings_path(case::AbstractString, filename::AbstractString)
-    return joinpath(get_settings_path(case), filename)
-end
+
 case = dirname(@__FILE__)
 optimizer =  Gurobi.Optimizer
 
@@ -60,7 +58,7 @@ T = inputs["T"]
 @constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
 @constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y])
 
-@expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (inv_cost_per_mwhyr(gen[y]) + fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y])
+@expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (backup_inv_cost_per_mwhyr(gen[y]) + backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y])
 @expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[fuel_cols(gen[y])][t]) * (vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y])))
 
 @expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
