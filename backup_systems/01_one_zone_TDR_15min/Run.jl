@@ -9,6 +9,9 @@ pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
 
+function get_settings_path(case::AbstractString, filename::AbstractString)
+    return joinpath(get_settings_path(case), filename)
+end
 case = dirname(@__FILE__)
 optimizer =  Gurobi.Optimizer
 
