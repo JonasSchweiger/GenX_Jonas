@@ -80,6 +80,8 @@ function test_load_scaled_resources_data(gen, dfGen)
     @test GenX.rsv_max.(gen) == dfGen.rsv_max
 
     @test GenX.inv_cost_per_mwyr.(gen) == dfGen.inv_cost_per_mwyr
+    @test GenX.backup_inv_cost_per_mwhyr.(gen) == dfGen.backup_inv_cost_per_mwhyr
+    @test GenX.backup_fixed_om_cost_per_mwhyr.(gen) == dfGen.backup_fixed_om_cost_per_mwhyr
     @test GenX.fixed_om_cost_per_mwyr.(gen) == dfGen.fixed_om_cost_per_mwyr
     @test GenX.var_om_cost_per_mwh.(gen) == dfGen.var_om_cost_per_mwh
     @test GenX.inv_cost_per_mwhyr.(gen) == dfGen.inv_cost_per_mwhyr

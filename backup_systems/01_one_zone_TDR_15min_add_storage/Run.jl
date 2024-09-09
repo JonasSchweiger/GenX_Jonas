@@ -48,6 +48,10 @@ println(time_elapsed)
 
 T = myinputs["T"]
 G = myinputs["G"]
+gen = myinputs["RESOURCES"]
+fuels = myinputs["fuels"]
+fuel_costs = myinputs["fuel_costs"]
+omega = myinputs["omega"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
 
 @GenX.variable(EP, vBackup_fuel_capacity[y in myinputs["SINGLE_FUEL"]], lower_bound=0)

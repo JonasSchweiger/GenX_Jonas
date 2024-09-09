@@ -107,6 +107,14 @@ function configure_multi_stage_inputs(inputs_d::Dict,
             inv_cost_per_mwhyr.(gen),
             capital_recovery_period.(gen),
             tech_wacc.(gen))
+        gen.backup_inv_cost_per_mwhyr = compute_overnight_capital_cost(settings_d,
+            backup_inv_cost_per_mwhyr.(gen),
+            capital_recovery_period.(gen),
+            tech_wacc.(gen))
+        gen.backup_fixed_om_cost_per_mwhyr = compute_overnight_capital_cost(settings_d,
+            backup_fixed_om_cost_per_mwhyr.(gen),
+            capital_recovery_period.(gen),
+            tech_wacc.(gen))
         gen.inv_cost_charge_per_mwyr = compute_overnight_capital_cost(settings_d,
             inv_cost_charge_per_mwyr.(gen),
             capital_recovery_period.(gen),

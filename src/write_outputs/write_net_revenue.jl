@@ -58,6 +58,7 @@ function write_net_revenue(path::AbstractString,
     # Add investment cost to the dataframe
     dfNetRevenue.Inv_cost_MW = inv_cost_per_mwyr.(gen) .* dfCap[1:G, :NewCap]
     dfNetRevenue.Inv_cost_MWh = inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :NewEnergyCap]
+    dfNetRevenue.Inv_cost_MWh = backup_inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :NewEnergyCap]
     dfNetRevenue.Inv_cost_charge_MW = inv_cost_charge_per_mwyr.(gen) .*
                                       dfCap[1:G, :NewChargeCap]
     if !isempty(VRE_STOR)
