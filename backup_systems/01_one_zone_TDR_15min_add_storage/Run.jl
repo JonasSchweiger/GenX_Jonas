@@ -47,20 +47,21 @@ println("Time elapsed for model building is")
 println(time_elapsed)
 
 T = myinputs["T"]
+G = myinputs["G"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
 
 @GenX.variable(EP, vBackup_fuel_capacity[y in myinputs["SINGLE_FUEL"]], lower_bound=0)
 @GenX.variable(EP, vBackup_fuel_level[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0)
 @GenX.variable(EP, vBackup_emergency_purchase[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0)
-@GenX.variable(EP, vBackup_top_up[t in END_SUBPERIODS, y in myinputs["SINGLE_FUEL"]]>=0)
+@GenX.variable(EP, vBackup_top_up[t =1:T, y in myinputs["SINGLE_FUEL"]]>=0)
 
 @GenX.constraint(EP, [t = 1:T, y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]≤ vBackup_fuel_capacity[y])
 @GenX.constraint(EP, [t in END_SUBPERIODS,y in myinputs["SINGLE_FUEL"]], vBackup_top_up[t,y]== vBackup_fuel_capacity[y]-vBackup_fuel_level[t,y])
 @GenX.constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
 @GenX.constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y])
 
-@GenX.expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (backup_inv_cost_per_mwhyr(gen[y]) + backup_fixed_om_cost_per_mwhyr(gen[y]) * vBackup_fuel_capacity[y]))
-@GenX.expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[fuel_cols(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y])))
+@GenX.expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (backup_inv_cost_per_mwhyr(gen[y]) + backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y])
+@GenX.expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[fuel_cols(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
 
 @GenX.expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
 @GenX.expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
@@ -72,8 +73,6 @@ END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"]
 add_to_expression!(EP[:eObj], eBackup_Total_CFix)
 add_to_expression!(EP[:eObj], eBackup_Total_CVar)
 #end
-
-
 
 
 
