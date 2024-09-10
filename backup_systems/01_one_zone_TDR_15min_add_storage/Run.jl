@@ -5,6 +5,7 @@ using DataFrames
 using VegaLite
 using PyPlot
 using Plots
+using JuMP
 pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
@@ -54,21 +55,21 @@ fuel_costs = myinputs["fuel_costs"]
 omega = myinputs["omega"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
 
-@GenX.variable(EP, vBackup_fuel_capacity[y in myinputs["SINGLE_FUEL"]], lower_bound=0)
-@GenX.variable(EP, vBackup_fuel_level[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0)
-@GenX.variable(EP, vBackup_emergency_purchase[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0)
-@GenX.variable(EP, vBackup_top_up[t =1:T, y in myinputs["SINGLE_FUEL"]]>=0)
+@variable(EP, vBackup_fuel_capacity[y in myinputs["SINGLE_FUEL"]], lower_bound=0)
+@variable(EP, vBackup_fuel_level[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0)
+@variable(EP, vBackup_emergency_purchase[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0)
+@variable(EP, vBackup_top_up[t =1:T, y in myinputs["SINGLE_FUEL"]]>=0)
 
-@GenX.constraint(EP, [t = 1:T, y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]≤ vBackup_fuel_capacity[y])
-@GenX.constraint(EP, [t in END_SUBPERIODS,y in myinputs["SINGLE_FUEL"]], vBackup_top_up[t,y]== vBackup_fuel_capacity[y]-vBackup_fuel_level[t,y])
-@GenX.constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
-@GenX.constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y])
+@constraint(EP, [t = 1:T, y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]≤ vBackup_fuel_capacity[y])
+@constraint(EP, [t in END_SUBPERIODS,y in myinputs["SINGLE_FUEL"]], vBackup_top_up[t,y]== vBackup_fuel_capacity[y]-vBackup_fuel_level[t,y])
+@constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
+@constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y])
 
-@GenX.expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (backup_inv_cost_per_mwhyr(gen[y]) + backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y])
-@GenX.expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[fuel_cols(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
+@expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (GenX.backup_inv_cost_per_mwhyr(gen[y]) + GenX.backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y])
+@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
 
-@GenX.expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
-@GenX.expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
+@expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
+@expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
 
 # Add term to objective function expression, assuming that we are not using MultiStage
 #if MultiStage == 1
@@ -87,7 +88,7 @@ myinputs["solve_time"] = solve_time # Store the model solve time in myinputs
 # Run MGA if the MGA flag is set to 1 else only save the least cost solution
 if has_values(EP)
     println("Writing Output")
-    outputs_path = get_default_output_folder(case)
+    outputs_path = GenX.get_default_output_folder(case)
     elapsed_time = @elapsed outputs_path = write_outputs(EP,
         outputs_path,
         mysetup,
