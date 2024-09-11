@@ -61,6 +61,7 @@ END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"]
 @variable(EP, vBackup_top_up[t =1:T, y in myinputs["SINGLE_FUEL"]]>=0)
 
 @constraint(EP, [t = 1:T, y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]≤ vBackup_fuel_capacity[y])
+@constraint(EP, [y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y]>=1 )
 @constraint(EP, [t in END_SUBPERIODS,y in myinputs["SINGLE_FUEL"]], vBackup_top_up[t,y]== vBackup_fuel_capacity[y]-vBackup_fuel_level[t,y])
 @constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
 @constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y])
@@ -95,4 +96,34 @@ if has_values(EP)
         myinputs)
     println("Time elapsed for writing is")
     println(elapsed_time)
+end
+
+#println(typeof(vBackup_fuel_capacity))
+#println(size(vBackup_fuel_capacity))
+
+if has_values(EP)
+    println("Writing Output")
+    outputs_path = GenX.get_default_output_folder(case)
+
+    dfBackupOverview = DataFrame(
+        Technology = myinputs["RESOURCE_NAMES"][myinputs["SINGLE_FUEL"]],
+        Backup_fuel_capacity = Vector(value.(vBackup_fuel_capacity)[axes(vBackup_fuel_capacity)[1]]) 
+    )
+
+    dfBackupCost = DataFrame(
+        CFix = value.(EP[:eBackup_Total_CFix]),
+        CVar = value.(EP[:eBackup_Total_CVar]) 
+    )
+
+
+    dfBackupEvolution = DataFrame(Timestep = 1:T)
+    for y in myinputs["SINGLE_FUEL"]
+        dfBackupEvolution[!, Symbol("Backup_fuel_level_$(myinputs["RESOURCE_NAMES"][y])")] = value.(vBackup_fuel_level[:, y])
+        dfBackupEvolution[!, Symbol("Backup_emergency_purchase_$(myinputs["RESOURCE_NAMES"][y])")] = value.(vBackup_emergency_purchase[:, y])
+        dfBackupEvolution[!, Symbol("Backup_top_up_$(myinputs["RESOURCE_NAMES"][y])")] = value.(vBackup_top_up[:, y])
+    end
+    
+    CSV.write(joinpath(outputs_path, "backup_overview.csv"), dfBackupOverview)
+    CSV.write(joinpath(outputs_path, "backup_cost.csv"), dfBackupCost)
+    CSV.write(joinpath(outputs_path, "backup_evolution.csv"), dfBackupEvolution)
 end
