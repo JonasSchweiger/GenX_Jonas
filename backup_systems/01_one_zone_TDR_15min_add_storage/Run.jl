@@ -133,3 +133,7 @@ if has_values(EP)
     CSV.write(joinpath(outputs_path, "backup_cost.csv"), dfBackupCost)
     CSV.write(joinpath(outputs_path, "backup_evolution.csv"), dfBackupEvolution)
 end
+
+println(vBackup_fuel_capacity)
+
+println(omega)
