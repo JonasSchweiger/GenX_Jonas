@@ -5,6 +5,10 @@ using DataFrames
 using VegaLite
 using PyPlot
 using Plots
+using PlotlyJS
+using GraphRecipes
+using VegaLite
+using StatsPlots
 using JuMP
 pyplot()
 
@@ -139,6 +143,17 @@ if has_values(EP)
     CSV.write(joinpath(outputs_path, "backup_evolution.csv"), dfBackupEvolution)
 end
 
-println(vBackup_fuel_capacity)
 
-println(omega)
+netrevenue =  CSV.read(joinpath(case,"results/NetRevenue.csv"),DataFrame,missingstring="NA")
+
+xnames = netrevenue[!,2]
+names1 =  ["Investment cost" "Investment cost Storage" "Fixed OM cost" "Fixed OM Cost Storage" "Variable OM cost" "Fuel cost" "Start Cost" "Revenue"]
+
+netrev = [netrevenue[!,6]+netrevenue[!,7]+netrevenue[!,8] netrevenue[!,9] netrevenue[!,10]+netrevenue[!,11]+netrevenue[!,12] netrevenue[!,13] netrevenue[!,14] netrevenue[!,17] netrevenue[!,20]]
+
+groupedbar(xnames,netrev, bar_position = :stack, bar_width=0.9,size=(850,800),
+    labels=names1,title="Cost Allocation",xlabel="Node",ylabel="Cost (Dollars)", 
+    titlefontsize=10,legend=:outerright,ylims=[0,maximum(netrevenue[!,"Revenue"])],xrotation = 90)
+StatsPlots.scatter!(xnames,netrevenue[!,"Revenue"],label="Revenue",color="black")
+
+#println(omega)

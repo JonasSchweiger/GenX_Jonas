@@ -58,9 +58,9 @@ function write_net_revenue(path::AbstractString,
     # Add investment cost to the dataframe
     dfNetRevenue.Inv_cost_MW = inv_cost_per_mwyr.(gen) .* dfCap[1:G, :NewCap]
     dfNetRevenue.Inv_cost_MWh = inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :NewEnergyCap]
-    dfNetRevenue.Inv_cost_MWh = backup_inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :NewEnergyCap]
     dfNetRevenue.Inv_cost_charge_MW = inv_cost_charge_per_mwyr.(gen) .*
                                       dfCap[1:G, :NewChargeCap]
+    dfNetRevenue.Inv_cost_backup_MWh = backup_inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :EndEnergyCap]                                  
     if !isempty(VRE_STOR)
         # Doesn't include charge capacities
         if !isempty(SOLAR)
@@ -78,6 +78,7 @@ function write_net_revenue(path::AbstractString,
     end
     if setup["ParameterScale"] == 1
         dfNetRevenue.Inv_cost_MWh *= ModelScalingFactor # converting Million US$ to US$
+        dfNetRevenue.Inv_cost_backup_MWh *= ModelScalingFactor
         dfNetRevenue.Inv_cost_MW *= ModelScalingFactor # converting Million US$ to US$
         dfNetRevenue.Inv_cost_charge_MW *= ModelScalingFactor # converting Million US$ to US$
     end
@@ -88,6 +89,8 @@ function write_net_revenue(path::AbstractString,
                                      dfCap[1:G, :EndEnergyCap]
     dfNetRevenue.Fixed_OM_cost_charge_MW = fixed_om_cost_charge_per_mwyr.(gen) .*
                                            dfCap[1:G, :EndChargeCap]
+    dfNetRevenue.Fixed_OM_cost_backup_Mwh = backup_fixed_om_cost_per_mwhyr.(gen) .*
+                                            dfCap[1:G, :EndEnergyCap]                                       
 
     dfNetRevenue.Var_OM_cost_out = var_om_cost_per_mwh.(gen) .* dfPower[1:G, :AnnualSum]
     if !isempty(VRE_STOR)
@@ -262,6 +265,8 @@ function write_net_revenue(path::AbstractString,
     dfNetRevenue.Cost = (dfNetRevenue.Inv_cost_MW
                          .+
                          dfNetRevenue.Inv_cost_MWh
+                         .+
+                         dfNetRevenue.Inv_cost_backup_MWh
                          .+
                          dfNetRevenue.Inv_cost_charge_MW
                          .+
