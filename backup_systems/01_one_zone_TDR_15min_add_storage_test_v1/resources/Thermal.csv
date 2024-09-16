@@ -1,0 +1,5 @@
+Resource,Zone,Model,New_Build,Can_Retire,Existing_Cap_MW,Max_Cap_MW,Min_Cap_MW,Inv_Cost_per_MWyr,Fixed_OM_Cost_per_MWyr,Var_OM_Cost_per_MWh,backup_inv_cost_per_mwhyr,backup_fixed_om_cost_per_mwhyr,Heat_Rate_MMBTU_per_MWh,Fuel,Cap_Size,Start_Cost_per_MW,Start_Fuel_MMBTU_per_MW,Up_Time,Down_Time,Ramp_Up_Percentage,Ramp_Dn_Percentage,Min_Power,Reg_Max,Rsv_Max,Reg_Cost,Rsv_Cost,region,cluster
+MA_Diesel_Gen,1,1,1,0,0,-1,-1,59163,7000,20,62,10,1.795,MA_Diesel,250,45,2,4,0,1,1,0.3,0,0,0,0,MA,1
+MA_Methanol_FC,1,1,1,0,0,-1,-1,106079,12000,20,62,10,1.3,MA_Methanol,250,45,2,4,0,1,1,0,0,0,0,0,MA,1
+MA_Ammonia_Gen,1,1,1,0,0,-1,-1,66043,8400,24,310,50,1.795,MA_Ammonia,250,45,2,4,0,1,1,0.3,0,0,0,0,MA,1
+MA_Primary_Al_Air_BESS,1,1,1,0,0,-1,-1,19721,7000,20,0,0,0.93775,MA_Primary_Al_Air,250,0,0,1,0,1,1,0,0,0,0,0,MA,1
