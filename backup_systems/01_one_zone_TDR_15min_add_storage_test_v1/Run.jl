@@ -175,23 +175,16 @@ netrevenue = vcat(netrevenue_rows...)
 # Rest of the code (similar to the first example)
 CSV.write(joinpath(outputs_path, "cost_rows.csv"), netrevenue)
 
+netrevenue =  CSV.read(joinpath(case,"results/cost_rows.csv"),DataFrame,missingstring="NA")
+
 xnames = netrevenue[!,2]
-names1 = ["Investment cost", "Investment cost Storage", "Fixed OM cost", "OM Cost Storage", "Variable OM cost", "Fuel cost", "Start Cost", "Revenue"]
+names1 = ["Investment cost" "Investment cost Storage" "Fixed OM cost" "OM Cost Storage" "Variable OM cost" "Fuel cost" "Start Cost" "Revenue"]
 
 # Assuming 'gen' and 'dfBackupOverview' are available from your previous context
 netrev_backup_fix = GenX.backup_inv_cost_per_mwhyr.(gen) .* dfBackupOverview[:, 2]
 netrev_backup_var = GenX.backup_fixed_om_cost_per_mwhyr.(gen) .* dfBackupOverview[:, 2]
 
-netrev = [
-    netrevenue[!, 6] + netrevenue[!, 7] + netrevenue[!, 8],
-    netrev_backup_fix,
-    netrevenue[!, 10] + netrevenue[!, 11] + netrevenue[!, 12],
-    netrev_backup_var,
-    netrevenue[!, 14] + netrevenue[!, 16],
-    netrevenue[!, 15],
-    netrevenue[!, 18],
-    netrevenue[!, 21]
-]
+netrev = [netrevenue[!, 6] + netrevenue[!, 7] + netrevenue[!, 8] netrev_backup_fix netrevenue[!, 10] + netrevenue[!, 11] + netrevenue[!, 12] netrev_backup_var netrevenue[!, 14] + netrevenue[!, 16] netrevenue[!, 15] netrevenue[!, 18] netrevenue[!, 21]]
 
 groupedbar(
     xnames, netrev,
