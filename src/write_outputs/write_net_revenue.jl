@@ -60,7 +60,8 @@ function write_net_revenue(path::AbstractString,
     dfNetRevenue.Inv_cost_MWh = inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :NewEnergyCap]
     dfNetRevenue.Inv_cost_charge_MW = inv_cost_charge_per_mwyr.(gen) .*
                                       dfCap[1:G, :NewChargeCap]
-    dfNetRevenue.Inv_cost_backup_MWh = backup_inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :EndEnergyCap]                                  
+    dfNetRevenue.Inv_cost_backup_MWh = backup_inv_cost_per_mwhyr.(gen) .* dfCap[1:G, :EndEnergyCap]
+                                      
     if !isempty(VRE_STOR)
         # Doesn't include charge capacities
         if !isempty(SOLAR)
