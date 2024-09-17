@@ -28,7 +28,31 @@ for netrevenue in netrevenues
     end
 end
 
+################################################
+#this code works:
 
+netrevenue =  CSV.read(joinpath(case,"results/NetRevenue.csv"),DataFrame,missingstring="NA")
+
+
+xnames = netrevenue[!,2]
+names1 =  ["Investment cost" "Investment cost Storage" "Fixed OM cost" "OM Cost Storage" "Variable OM cost" "Fuel cost" "Start Cost" "Revenue"]
+
+netrev_backup_fix = GenX.backup_inv_cost_per_mwhyr.(gen) .* dfBackupOverview[:,2]
+netrev_backup_var = GenX.backup_fixed_om_cost_per_mwhyr.(gen) .* dfBackupOverview[:,2]
+
+netrev = [netrevenue[!,6]+netrevenue[!,7]+netrevenue[!,8] netrev_backup_fix netrevenue[!,10]+netrevenue[!,11]+netrevenue[!,12] netrev_backup_var netrevenue[!,14]+netrevenue[!,16] netrevenue[!,15] netrevenue[!,18] netrevenue[!,21]]
+
+
+groupedbar(xnames,netrev, bar_position = :stack, bar_width=0.9,size=(850,800),
+    labels=names1,title="Cost Allocation",xlabel="Node",ylabel="Cost (Dollars)", 
+    titlefontsize=10,legend=:outerright,ylims=[0,maximum(netrevenue[!,"Revenue"])],xrotation = 90)
+StatsPlots.scatter!(xnames,netrevenue[!,"Revenue"],label="Revenue",color="black")
+
+
+##############################################
+
+###################################################
+#this code works!!
 # Pre-processing for emissions graph
 emm1 =  CSV.read(joinpath(case,"results/emissions.csv"),DataFrame)
 tstart = 1
@@ -44,3 +68,5 @@ emm_plot  |>@vlplot(mark={:line},
     x={:Hour,title="Time Step (hours)",axis={values=tstart:20:tend}}, 
     y={:MW,title="Emissions (Tons)",type="quantitative"},
     width=845,height=400,title="Emissions")
+
+#######################################################
