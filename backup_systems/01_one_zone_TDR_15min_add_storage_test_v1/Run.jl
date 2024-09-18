@@ -145,9 +145,6 @@ end
 
 
 
-
-
-
 # Read all NetRevenue files from their respective folders
 netrevenue_files = ["NetRevenue.csv", "NetRevenue.csv", "NetRevenue.csv", "NetRevenue.csv"]
 result_folders = ["results", "results_1", "results_2", "results_3"]
