@@ -29,6 +29,7 @@ for netrevenue in netrevenues
 end
 
 ################################################
+
 #this code works:
 
 netrevenue =  CSV.read(joinpath(case,"results/NetRevenue.csv"),DataFrame,missingstring="NA")
@@ -70,3 +71,4 @@ emm_plot  |>@vlplot(mark={:line},
     width=845,height=400,title="Emissions")
 
 #######################################################
+

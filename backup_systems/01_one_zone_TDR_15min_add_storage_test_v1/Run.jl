@@ -10,6 +10,7 @@ using GraphRecipes
 using VegaLite
 using StatsPlots
 using JuMP
+using Plots
 pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
@@ -97,7 +98,9 @@ println("Solving Model")
 EP, solve_time = solve_model(EP, mysetup)
 myinputs["solve_time"] = solve_time # Store the model solve time in myinputs
 
-# Run MGA if the MGA flag is set to 1 else only save the least cost solution
+#println(typeof(vBackup_fuel_capacity))
+println(size(vBackup_top_up))
+
 if has_values(EP)
     println("Writing Output")
     outputs_path = GenX.get_default_output_folder(case)
@@ -107,14 +110,6 @@ if has_values(EP)
         myinputs)
     println("Time elapsed for writing is")
     println(elapsed_time)
-end
-
-#println(typeof(vBackup_fuel_capacity))
-println(size(vBackup_top_up))
-
-if has_values(EP)
-    println("Writing Output")
-    outputs_path = GenX.get_default_output_folder(case)
 
     dfBackupOverview = DataFrame(
         Technology = myinputs["RESOURCE_NAMES"][myinputs["SINGLE_FUEL"]],
@@ -145,6 +140,11 @@ end
 
 
 
+
+
+
+###############################
+#cost split diagram
 # Read all NetRevenue files from their respective folders
 netrevenue_files = ["NetRevenue.csv", "NetRevenue.csv", "NetRevenue.csv", "NetRevenue.csv"]
 result_folders = ["results", "results_1", "results_2", "results_3"]
@@ -191,9 +191,48 @@ groupedbar(
 )
 StatsPlots.scatter!(xnames, netrevenue[!, "Revenue"], label="Revenue", color="black")
 
+#####################ä
 
 
+#emissions diagram (works)
+# Read all Emission files from their respective folders
+emission_files = ["emissions.csv", "emissions.csv", "emissions.csv", "emissions.csv"]
+result_folders = ["results", "results_1", "results_2", "results_3"]
+
+# Assuming you have the necessary packages loaded (CSV, DataFrames, StatsPlots, GenX)
+
+# Function to read a specific row from a CSV file in a given folder
+function read_row(folder, file, row_number)
+    filepath = joinpath(case, folder, file)
+    df = CSV.read(filepath, DataFrame, missingstring="NA")
+    return df[row_number, :]
+end
+
+# Extract specific rows from different folders
+emission_rows = [
+    read_row(result_folders[1], emission_files[1], 2),
+    read_row(result_folders[2], emission_files[2], 2),
+    read_row(result_folders[3], emission_files[3], 2),
+    read_row(result_folders[4], emission_files[4], 2)
+]
+
+# Combine the rows into a DataFrame
+emissions_full = vcat(emission_rows...)
+# Rest of the code (similar to the first example)
+CSV.write(joinpath(outputs_path, "emissions_full.csv"), emissions_full)
+
+emissions_full =  CSV.read(joinpath(case,"results/emissions_full.csv"),DataFrame,missingstring="NA")
+
+println(typeof(emissions_full))
 
 
+xnames_2 = ["Diesel Generator", "Methanol FC", "Ammonia Generator"]
+emissions_plot = emissions_full[1:3, 2]
 
-#println(omega)
+Plots.bar(xnames_2, emissions_plot, 
+    xlabel = "Technology Options", 
+    ylabel = "Emission Values", 
+    label = nothing,  # No labels on individual bars
+    legend = :topleft, # Position the legend
+    title = "Emissions by Technology Option"
+)
