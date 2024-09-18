@@ -67,6 +67,7 @@ EMERGENCY_PURCHSASE_TIME = 1:96:T
 @variable(EP, vBackup_fuel_level[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0) #in MMBtu
 @variable(EP, vBackup_emergency_purchase[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0) #in MMBtu
 @variable(EP, vBackup_top_up[t =1:T, y in myinputs["SINGLE_FUEL"]]>=0) #in MMBtu
+@variable(EP, VBackup_fuel_unused[t=1:T, y in myinputs["SINGLE_FUEL"]]>=0) #in MMBtu
 
 @constraint(EP, [t = 1:T, y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]≤ vBackup_fuel_capacity[y])
 #@constraint(EP, [y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y]>=1 )
