@@ -230,7 +230,7 @@ function generate_model(setup::Dict, inputs::Dict, OPTIMIZER::MOI.OptimizerWithA
     end
 
     ## Define the objective function
-    @objective(EP, Min, setup["ObjScale"]*EP[:eObj])
+   # @objective(EP, Min, setup["ObjScale"]*EP[:eObj])
 
     ## Power balance constraints
     # demand = generation + storage discharge - storage charge - demand deferral + deferred demand satisfaction - demand curtailment (NSE)
@@ -246,6 +246,8 @@ function generate_model(setup::Dict, inputs::Dict, OPTIMIZER::MOI.OptimizerWithA
         JuMP.write_to_file(EP, filepath)
         println("Model Printed")
     end
+
+
 
     return EP
 end

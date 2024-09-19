@@ -19,6 +19,9 @@ function write_costs(path::AbstractString, inputs::Dict, setup::Dict, EP::Model)
         "cFuel",
         "cNSE",
         "cStart",
+        "cBackupFix", # added
+        "cBackupReplacement", # Add this row
+        "cBackupVar", # Add this row
         "cUnmetRsv",
         "cNetworkExp",
         "cUnmetPolicyPenalty",
@@ -40,6 +43,10 @@ function write_costs(path::AbstractString, inputs::Dict, setup::Dict, EP::Model)
            (!isempty(inputs["STOR_ASYMMETRIC"]) ? value(EP[:eTotalCFixCharge]) : 0.0)
 
     cFuel = value.(EP[:eTotalCFuelOut])
+    
+    cBackupFix = value.(EP[:eBackup_Total_CFix])
+    cBackupReplacement = value.(EP[:eBackup_Total_CReplacement])
+    cBackupVar = value.(EP[:eBackup_Total_CVar])
 
     if !isempty(VRE_STOR)
         cFix += ((!isempty(inputs["VS_DC"]) ? value(EP[:eTotalCFixDC]) : 0.0) +
@@ -66,6 +73,9 @@ function write_costs(path::AbstractString, inputs::Dict, setup::Dict, EP::Model)
             cFuel,
             value(EP[:eTotalCNSE]),
             0.0,
+            cBackupFix, # Include this
+            cBackupReplacement, # Include this
+            cBackupVar, # Include this
             0.0,
             0.0,
             0.0,
@@ -78,8 +88,12 @@ function write_costs(path::AbstractString, inputs::Dict, setup::Dict, EP::Model)
             cFix,
             cVar,
             cFuel,
+            #cBackupFix,
             value(EP[:eTotalCNSE]),
             0.0,
+            cBackupFix, # Include this
+            cBackupReplacement, # Include this
+            cBackupVar, # Include this
             0.0,
             0.0,
             0.0,
@@ -272,6 +286,15 @@ function write_costs(path::AbstractString, inputs::Dict, setup::Dict, EP::Model)
         tempCNSE = sum(value.(EP[:eCNSE][:, :, z]))
         tempCTotal += tempCNSE
 
+        tempCBackupFix = value.(EP[:eBackup_Total_CFix])
+        tempCTotal += tempCBackupFix
+
+        tempCBackupReplacement = value.(EP[:eBackup_Total_CReplacement])
+        tempCTotal += tempCBackupReplacement
+
+        tempCBackupVar = value.(EP[:eBackup_Total_CVar])
+        tempCTotal += tempCBackupVar
+
         # if any(dfGen.CO2_Capture_Fraction .!=0)
         if !isempty(CCS_ZONE)
             tempCCO2 = sum(value.(EP[:ePlantCCO2Sequestration][CCS_ZONE]))
@@ -295,6 +318,9 @@ function write_costs(path::AbstractString, inputs::Dict, setup::Dict, EP::Model)
             tempCFuel,
             tempCNSE,
             tempCStart,
+            tempCBackupFix, # Include this
+            tempCBackupReplacement, # Include this
+            tempCBackupVar, # Include this
             "-",
             "-",
             "-",

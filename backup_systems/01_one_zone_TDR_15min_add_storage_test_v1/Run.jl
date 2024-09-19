@@ -92,12 +92,16 @@ EMERGENCY_PURCHSASE_TIME = 1:96:T
 #if MultiStage == 1
 #    add_to_expression!(EP[:eObj], 1 / inputs["OPEXMULT"], eBackup_Total_CVar)
 #else
-add_to_expression!(EP[:eObj], eBackup_Total_CFix)
-add_to_expression!(EP[:eObj], eBackup_Total_CReplacement)
-add_to_expression!(EP[:eObj], eBackup_Total_CVar)
+#add_to_expression!(EP[:eObj], eBackup_Total_CFix)
+#add_to_expression!(EP[:eObj], eBackup_Total_CReplacement)
+#add_to_expression!(EP[:eObj], eBackup_Total_CVar)
 #end
 
+EP[:eObj] += eBackup_Total_CFix
+EP[:eObj] += eBackup_Total_CReplacement
+EP[:eObj] += eBackup_Total_CVar
 
+@objective(EP, Min, mysetup["ObjScale"]*EP[:eObj])
 
 println("Solving Model")
 EP, solve_time = solve_model(EP, mysetup)
@@ -108,6 +112,7 @@ println(size(vBackup_top_up))
 
 if has_values(EP)
     println("Writing Output")
+    println(value(EP[:eObj]))
     outputs_path = GenX.get_default_output_folder(case)
     elapsed_time = @elapsed outputs_path = write_outputs(EP,
         outputs_path,
@@ -146,5 +151,30 @@ end
 
 
 
+using CSV
+using DataFrames
+using Plots
 
+# Read the CSV file into a DataFrame
+df_costs = CSV.read("costs.csv", DataFrame)
 
+# Drop the first row ("Costs") which contains the labels
+df_costs = df_costs[2:end, :]
+
+# Melt the DataFrame to prepare for plotting
+df_melted = stack(df_costs, Not(:Costs))
+
+# Rename the columns for clarity
+rename!(df_melted, :variable => :Zone, :value => :Cost)
+
+# Convert Cost column to numeric (assuming it was read as string from CSV)
+df_melted.Cost = parse.(Float64, df_melted.Cost)
+
+# Create the stacked bar plot
+plot = groupedbar(df_melted.Zone, df_melted.Cost, group = df_melted.Costs, 
+                  xlabel = "Zone", ylabel = "Cost", 
+                  title = "Cost Breakdown by Zone and Type",
+                  legend = :topright, bar_width = 0.7)
+
+# Display the plot
+display(plot)
