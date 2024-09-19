@@ -609,6 +609,7 @@ inv_cost_per_mwyr(r::AbstractResource) = get(r, :inv_cost_per_mwyr, default_zero
 fixed_om_cost_per_mwyr(r::AbstractResource) = get(r, :fixed_om_cost_per_mwyr, default_zero)
 backup_inv_cost_per_mwhyr(r::AbstractResource) = get(r, :backup_inv_cost_per_mwhyr, default_zero)
 backup_fixed_om_cost_per_mwhyr(r::AbstractResource) = get(r, :backup_fixed_om_cost_per_mwhyr, default_zero)
+backup_replacement_factor(r::AbstractResource) = get(r, :backup_replacement_factor, default_zero)
 var_om_cost_per_mwh(r::AbstractResource) = get(r, :var_om_cost_per_mwh, default_zero)
 inv_cost_per_mwhyr(r::AbstractResource) = get(r, :inv_cost_per_mwhyr, default_zero)
 function fixed_om_cost_per_mwhyr(r::AbstractResource)
