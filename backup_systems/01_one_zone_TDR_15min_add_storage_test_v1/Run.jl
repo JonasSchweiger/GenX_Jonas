@@ -80,22 +80,19 @@ EMERGENCY_PURCHSASE_TIME = 1:96:T
 
 
 @expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (GenX.backup_inv_cost_per_mwhyr(gen[y]) + GenX.backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y] * 0.293071) # 0.293071 MWh/MMBtu
-@expression(EP, eBackup_CReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_costs[GenX.fuel(gen[y])][1] - sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * vBackup_top_up[t,y] for t in 1:T))
-@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
+@expression(EP, eBackup_CReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * mean(fuel_costs[GenX.fuel(gen[y])]) - sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * vBackup_top_up[t,y] for t in 1:T))
+@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_ -costs[GenX.fuel(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
 
 
 @expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
 @expression(EP, eBackup_Total_CReplacement, sum(EP[:eBackup_CReplacement][y] for y in 1:G))
 @expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
 
-# Add term to objective function expression, assuming that we are not using MultiStage
-#if MultiStage == 1
-#    add_to_expression!(EP[:eObj], 1 / inputs["OPEXMULT"], eBackup_Total_CVar)
-#else
+
 #add_to_expression!(EP[:eObj], eBackup_Total_CFix)
 #add_to_expression!(EP[:eObj], eBackup_Total_CReplacement)
 #add_to_expression!(EP[:eObj], eBackup_Total_CVar)
-#end
+
 
 EP[:eObj] += eBackup_Total_CFix
 EP[:eObj] += eBackup_Total_CReplacement
@@ -148,33 +145,3 @@ if has_values(EP)
     CSV.write(joinpath(outputs_path, "backup_cost.csv"), dfBackupCost)
     CSV.write(joinpath(outputs_path, "backup_evolution.csv"), dfBackupEvolution)
 end
-
-
-
-using CSV
-using DataFrames
-using Plots
-
-# Read the CSV file into a DataFrame
-df_costs = CSV.read("costs.csv", DataFrame)
-
-# Drop the first row ("Costs") which contains the labels
-df_costs = df_costs[2:end, :]
-
-# Melt the DataFrame to prepare for plotting
-df_melted = stack(df_costs, Not(:Costs))
-
-# Rename the columns for clarity
-rename!(df_melted, :variable => :Zone, :value => :Cost)
-
-# Convert Cost column to numeric (assuming it was read as string from CSV)
-df_melted.Cost = parse.(Float64, df_melted.Cost)
-
-# Create the stacked bar plot
-plot = groupedbar(df_melted.Zone, df_melted.Cost, group = df_melted.Costs, 
-                  xlabel = "Zone", ylabel = "Cost", 
-                  title = "Cost Breakdown by Zone and Type",
-                  legend = :topright, bar_width = 0.7)
-
-# Display the plot
-display(plot)
