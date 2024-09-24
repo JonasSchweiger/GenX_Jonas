@@ -11,6 +11,7 @@ using VegaLite
 using StatsPlots
 using JuMP
 using Plots
+using Statistics
 pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
@@ -81,7 +82,7 @@ EMERGENCY_PURCHSASE_TIME = 1:96:T
 
 @expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (GenX.backup_inv_cost_per_mwhyr(gen[y]) + GenX.backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y] * 0.293071) # 0.293071 MWh/MMBtu
 @expression(EP, eBackup_CReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * mean(fuel_costs[GenX.fuel(gen[y])]) - sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * vBackup_top_up[t,y] for t in 1:T))
-@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_ -costs[GenX.fuel(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
+@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * (5 * vBackup_emergency_purchase[t,y] + vBackup_top_up[t,y]) for t in 1:T))
 
 
 @expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
