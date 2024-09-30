@@ -1,0 +1,2 @@
+01: power outages with 1 MW demand (v1 contains the fuel replacement)
+02: power outages with 1MW demand and used for graphs (with 15min intervals,TDR)
