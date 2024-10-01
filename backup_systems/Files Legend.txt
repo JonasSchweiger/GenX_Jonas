@@ -1,2 +1,3 @@
-01: power outages with 1 MW demand (v1 contains the fuel replacement)
+01: power outages with 1 MW demand (v1 contains the fuel replacement, from now on all the other files also contain fuel replacement)
 02: power outages with 1MW demand and used for graphs (with 15min intervals,TDR)
+03: REAL power outages

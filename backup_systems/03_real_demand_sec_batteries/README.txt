@@ -1,0 +1,1 @@
+Containing the new option to disable the emergency purchases for secondary batteries
