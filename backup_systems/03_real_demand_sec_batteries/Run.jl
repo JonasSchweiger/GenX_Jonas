@@ -64,6 +64,13 @@ omega = myinputs["omega"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
 EMERGENCY_PURCHSASE_TIME = 1:480:T
 
+no_purchases = Int64[]
+for r in gen
+    if gen.backup_emergency_purchase == 0
+        push!(no_purchases, r.id)
+    end
+end
+
 @variable(EP, vBackup_fuel_capacity[y in myinputs["SINGLE_FUEL"]], lower_bound=0) #in MMBtu
 @variable(EP, vBackup_fuel_level[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0) #in MMBtu
 @variable(EP, vBackup_emergency_purchase[t = 1:T, y in myinputs["SINGLE_FUEL"]]>=0) #in MMBtu
@@ -76,6 +83,7 @@ EMERGENCY_PURCHSASE_TIME = 1:480:T
 @constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
 @constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y]) #vFuel is /billion BTU
 @constraint(EP, [t in setdiff(1:T, EMERGENCY_PURCHSASE_TIME), y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] == 0)
+@constraint(EP, [t in EMERGENCY_PURCHSASE_TIME, y in no_purchases], vBackup_emergency_purchase[t,y] == 0)
 
 #@constraint(EP, myinputs["RESOURCES"]["MA_Methanol"][:Cap] >= 1) 
 
