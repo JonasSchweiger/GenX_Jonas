@@ -62,11 +62,11 @@ fuels = myinputs["fuels"]
 fuel_costs = myinputs["fuel_costs"]
 omega = myinputs["omega"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
-EMERGENCY_PURCHSASE_TIME = 1:480:T
+EMERGENCY_PURCHSASE_TIME = 1:24:T
 
 no_purchases = Int64[]
 for r in gen
-    if gen.backup_emergency_purchase == 0
+    if r.backup_emergency_purchase == 0
         push!(no_purchases, r.id)
     end
 end
