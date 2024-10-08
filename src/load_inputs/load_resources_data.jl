@@ -92,7 +92,9 @@ function scale_resources_data!(resource_in::DataFrame, scale_factor::Float64)
         :inv_cost_charge_per_mwyr,       # to $M/GW/yr
         :backup_inv_cost_per_mwhyr,     # to $M/GWh/yr
         :backup_fixed_om_cost_per_mwhyr, # to $M/GWh/yr
-        :backup_replacement_factor,     
+        :backup_replacement_factor,
+        :energy_density_mj_per_kg,
+        :energy_density_mj_per_m3,     
         :fixed_om_cost_per_mwyr,        # to $M/GW/yr
         :fixed_om_cost_per_mwhyr,       # to $M/GWh/yr
         :fixed_om_cost_charge_per_mwyr, # to $M/GW/yr
