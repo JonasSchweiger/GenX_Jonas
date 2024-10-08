@@ -97,6 +97,10 @@ end
 @expression(EP, eBackup_Total_CReplacement, sum(EP[:eBackup_CReplacement][y] for y in 1:G))
 @expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
 
+#add expressions for volume occupied and weight of storage
+@expression(EP, eBackup_m3[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / GenX.energy_density_MJ_per_m3(gen[y]) * 1055.055) # 1055.055 MJ/MMBtu
+@expression(EP, eBackup_kg[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / GenX.energy_density_MJ_per_kg(gen[y]) * 1055.055) # 1055.055 MJ/MMBtu
+
 
 #add_to_expression!(EP[:eObj], eBackup_Total_CFix)
 #add_to_expression!(EP[:eObj], eBackup_Total_CReplacement)
@@ -129,7 +133,10 @@ if has_values(EP)
 
     dfBackupOverview = DataFrame(
         Technology = myinputs["RESOURCE_NAMES"][myinputs["SINGLE_FUEL"]],
-        Backup_fuel_capacity_MMBtu = Vector(value.(vBackup_fuel_capacity)[axes(vBackup_fuel_capacity)[1]]) 
+        Backup_fuel_capacity_MMBtu = Vector(value.(vBackup_fuel_capacity)[axes(vBackup_fuel_capacity)[1]]),
+        Space_used_m3 = Vector(value.(eBackup_m3)[axes(eBackup_m3)[1]]),
+        Weight_kg = Vector(value.(eBackup_kg)[axes(eBackup_kg)[1]])
+ 
     )
 
     dfBackupCost = DataFrame(
