@@ -134,7 +134,7 @@ if has_values(EP)
     dfBackupOverview = DataFrame(
         Technology = myinputs["RESOURCE_NAMES"][myinputs["SINGLE_FUEL"]],
         Backup_fuel_capacity_MMBtu = Vector(value.(vBackup_fuel_capacity)[axes(vBackup_fuel_capacity)[1]]),
-        Space_used_m3 = Vector(value.(eBackup_m3)[axes(eBackup_m3)[1]]),
+        Volume_m3 = Vector(value.(eBackup_m3)[axes(eBackup_m3)[1]]),
         Weight_kg = Vector(value.(eBackup_kg)[axes(eBackup_kg)[1]])
  
     )
