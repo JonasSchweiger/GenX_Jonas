@@ -98,8 +98,8 @@ end
 @expression(EP, eBackup_Total_CVar, sum(EP[:eBackup_CVar][y] for y in 1:G))
 
 #add expressions for volume occupied and weight of storage
-@expression(EP, eBackup_m3[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / GenX.energy_density_MJ_per_m3(gen[y]) * 1055.055) # 1055.055 MJ/MMBtu
-@expression(EP, eBackup_kg[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / GenX.energy_density_MJ_per_kg(gen[y]) * 1055.055) # 1055.055 MJ/MMBtu
+@expression(EP, eBackup_m3[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / (GenX.energy_density_mj_per_m3(gen[y])) * 1055.055) # 1055.055 MJ/MMBtu
+@expression(EP, eBackup_kg[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / (GenX.energy_density_mj_per_kg(gen[y])) * 1055.055) # 1055.055 MJ/MMBtu
 
 
 #add_to_expression!(EP[:eObj], eBackup_Total_CFix)
