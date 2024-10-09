@@ -81,7 +81,7 @@ end
 #@constraint(EP, [y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y]>=1 )
 @constraint(EP, [t in END_SUBPERIODS,y in myinputs["SINGLE_FUEL"]], vBackup_top_up[t,y]== vBackup_fuel_capacity[y]-vBackup_fuel_level[t,y])
 @constraint(EP, [t in myinputs["START_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y]== vBackup_fuel_capacity[y])
-@constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t] + vBackup_emergency_purchase[t,y]) #vFuel is /billion BTU
+@constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t-1]/4 + vBackup_emergency_purchase[t,y]) #vFuel is /billion BTU, watch out for factor 4!!
 @constraint(EP, [t in setdiff(1:T, EMERGENCY_PURCHSASE_TIME), y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] == 0)
 @constraint(EP, [t in EMERGENCY_PURCHSASE_TIME, y in no_purchases], vBackup_emergency_purchase[t,y] == 0)
 
