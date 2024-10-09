@@ -42,9 +42,9 @@ for i in 1:nrow(CSV.read("backup_systems/03_real_demand_sec_batteries/resources/
         global dfBackupCostOverview_2 = dfCost[:, 1:2] 
         rename!(dfBackupCostOverview_2, :Total => :Iteration1)  # Rename the second column
     else
-        # Extract only the "Total" column for subsequent iterations, rename it before concatenating
-        rename!(dfCost, :Total => Symbol("Iteration$i"))  # Rename the column in dfCost
-        dfBackupCostOverview = hcat(dfBackupCostOverview, dfCost[:, Symbol("Iteration$i")]) 
+        # Extract only the second column for subsequent iterations
+        global dfBackupCostOverview_2 = hcat(dfBackupCostOverview_2, dfCost[:, 2], makeunique=true)
+        #rename!(dfBackupCostOverview_2, :Total => Symbol("Iteration$i")) # Rename the new column
     end
 end
 
