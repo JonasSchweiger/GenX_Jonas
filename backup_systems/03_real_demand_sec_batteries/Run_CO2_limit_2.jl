@@ -46,7 +46,7 @@ function modify_co2_cap_csv(co2_limit)
     df = CSV.read("backup_systems/03_real_demand_sec_batteries/policies/CO2_cap.csv", DataFrame)
 
     # Set the CO2 limit in the specified column
-    df[1, "CO_2_Max_tons_MWh_1"] = co2_limit
+    df[1, "CO_2_Max_Mtons_1"] = co2_limit
 
     # Set CO_2_Cap_Zone_1 to 1
     df[1, "CO_2_Cap_Zone_1"] = 1 
@@ -74,7 +74,7 @@ modify_thermal_csv("MA_Diesel_Gen")
 include("Run.jl")
 
 # Get co2_start from emissions.csv
-co2_start = get_co2_emissions()
+co2_start = get_co2_emissions() * 10^(-6) * 1.0001 # account for rounding errors
 
 # --- Find co2_end ---
 # Set all "Max_Cap_MW" to 0 except for "MA_Secondary_Li_Ion_BESS"
@@ -84,13 +84,15 @@ modify_thermal_csv("MA_Secondary_Li_Ion_BESS")
 include("Run.jl")
 
 # Get co2_end from emissions.csv
-co2_end = get_co2_emissions()
+co2_end = get_co2_emissions() * 10^(-6) * 1.0001 #account for rounding errors
 dfBackupCapacityOverview = DataFrame()
 modify_thermal_csv_value(-1) 
 
+print(co2_start)
+print(co2_end)
 # --- Run the main loop with calculated CO2 limits ---
 if !isnothing(co2_start) && !isnothing(co2_end)
-    n_steps = 10  # Adjust this value to change the number of steps
+    n_steps = 20  # Adjust this value to change the number of steps
 
     # Calculate the step size
     step_size = (co2_start - co2_end) / (n_steps - 1)
