@@ -46,10 +46,11 @@ OPTIMIZER = configure_solver(settings_path, optimizer)
 
 ### Load inputs
 
-#mysetup["MinCapReq"] = 1
+
 println("Loading Inputs")
 myinputs = load_inputs(mysetup, case)
 
+###### Generating the model
 println("Generating the Optimization Model")
 time_elapsed = @elapsed EP = generate_model(mysetup, myinputs, OPTIMIZER)
 println("Time elapsed for model building is")
