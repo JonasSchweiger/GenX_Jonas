@@ -13,6 +13,14 @@ using JuMP
 using Plots
 using Statistics
 
+#ensure that no CO2 limit
+df_co2_lim = CSV.read("backup_systems/03_real_demand_sec_batteries/policies/CO2_cap.csv", DataFrame)
+
+# Set CO_2_Cap_Zone_1 to 0
+df_co2_lim[1, "CO_2_Cap_Zone_1"] = 0 
+
+CSV.write("backup_systems/03_real_demand_sec_batteries/policies/CO2_cap.csv", df_co2_lim)
+
 
 # First sets all "Max_Cap_MW" entries to 0, then sets one to -1
 function modify_thermal_csv(row_index)
