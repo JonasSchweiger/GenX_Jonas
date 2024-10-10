@@ -162,3 +162,18 @@ if has_values(EP)
     CSV.write(joinpath(outputs_path, "backup_cost.csv"), dfBackupCost)
     CSV.write(joinpath(outputs_path, "backup_evolution.csv"), dfBackupEvolution)
 end
+
+
+### shortcut
+#if has_values(EP)
+#    println("Writing Output")
+#    println(value(EP[:eObj]))
+ #   outputs_path = GenX.get_default_output_folder(case)
+  #  elapsed_time = @elapsed outputs_path = GenX.write_capacity(outputs_path, #watch the different order here!
+   #     myinputs,
+    #    mysetup,
+     #   EP)
+    #println("Time elapsed for writing is")
+    #println(elapsed_time)
+
+#end
