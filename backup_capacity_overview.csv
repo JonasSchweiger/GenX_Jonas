@@ -1,0 +1,10 @@
+Resource,EndCap,x1,x1_1,x1_2
+MA_Diesel_Gen,0.0,0.0,0.0,0.0
+MA_Biodiesel_Gen,0.0,0.0,0.0,0.0
+MA_Methanol_FC,0.0,0.0,0.0,0.0
+MA_Hydrogen_FC,0.0,0.0,0.0,0.0
+MA_Ammonia_Gen,0.0,0.0,0.0,0.0
+MA_Primary_Al_Air_BESS,0.0,0.0,0.0,0.0
+MA_Secondary_Li_Ion_BESS,1.0,1.0,1.0,1.0
+MA_Secondary_Iron_Air_BESS,0.0,0.0,0.0,0.0
+Total,1.0,1.0,1.0,1.0
