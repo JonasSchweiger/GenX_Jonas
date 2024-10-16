@@ -62,6 +62,7 @@ gen = myinputs["RESOURCES"]
 fuels = myinputs["fuels"]
 fuel_costs = myinputs["fuel_costs"]
 omega = myinputs["omega"]
+fuel_CO2 = myinputs["fuel_CO2"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
 EMERGENCY_PURCHASE_TIME = 1:500:T
 
@@ -101,6 +102,13 @@ end
 #add expressions for volume occupied and weight of storage
 @expression(EP, eBackup_m3[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / (GenX.energy_density_mj_per_m3(gen[y])) * 1055.055) # 1055.055 MJ/MMBtu
 @expression(EP, eBackup_kg[y in myinputs["SINGLE_FUEL"]], vBackup_fuel_capacity[y] / (GenX.energy_density_mj_per_kg(gen[y])) * 1055.055) # 1055.055 MJ/MMBtu
+
+
+#add expression for emissions due to fuel replacement
+@expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])])
+@expression(EP, eBackup_Total_EReplacement, sum(EP[:eBackup_EReplacement][y] for y in 1:G))
+
+#@expression(EP, eEmissionsByZone, [EP[:eEmissionsByZone]; eBackup_Total_EReplacement])
 
 
 #add_to_expression!(EP[:eObj], eBackup_Total_CFix)
