@@ -105,12 +105,12 @@ end
 
 
 #add expression for emissions due to fuel replacement
-@expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])])
+@expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])]) #MMBtu * tCO2/MMBtu = tCO2
 @expression(EP, eBackup_Total_EReplacement, sum(EP[:eBackup_EReplacement][y] for y in 1:G))
 
-@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement]<=20)
+#@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement]<=10) #works
 
-
+#EP[:cCO2Emissions_systemwide] += eBackup_Total_EReplacement
 
 #add_to_expression!(EP[:eObj], eBackup_Total_CFix)
 #add_to_expression!(EP[:eObj], eBackup_Total_CReplacement)
@@ -152,7 +152,8 @@ if has_values(EP)
     dfBackupCost = DataFrame(
         CFix = value.(EP[:eBackup_Total_CFix]),
         CReplacement = value.(EP[:eBackup_Total_CReplacement]),
-        CVar = value.(EP[:eBackup_Total_CVar]) 
+        CVar = value.(EP[:eBackup_Total_CVar]),
+        Backup_Emissions = value.(cBackup_Total_Emissions) 
     )
 
 
