@@ -108,7 +108,7 @@ end
 @expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])]) #MMBtu * tCO2/MMBtu = tCO2
 @expression(EP, eBackup_Total_EReplacement, sum(EP[:eBackup_EReplacement][y] for y in 1:G))
 
-#@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement]<=10) #works
+@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement]<=100000) #works
 
 #EP[:cCO2Emissions_systemwide] += eBackup_Total_EReplacement
 
