@@ -92,7 +92,7 @@ print(co2_start)
 print(co2_end)
 # --- Run the main loop with calculated CO2 limits ---
 if !isnothing(co2_start) && !isnothing(co2_end)
-    n_steps = 7  # Adjust this value to change the number of steps
+    n_steps = 15  # Adjust this value to change the number of steps
 
     # Calculate the step size
     step_size = (co2_start - co2_end) / (n_steps - 1)
