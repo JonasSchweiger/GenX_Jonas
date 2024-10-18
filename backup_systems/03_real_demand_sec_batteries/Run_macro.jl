@@ -57,4 +57,4 @@ for i in 1:nrow(CSV.read("backup_systems/03_real_demand_sec_batteries/resources/
 end
 
 # Write the combined DataFrame to CSV
-CSV.write("backup_cost_overview.csv", dfBackupCostOverview_2) 
+CSV.write("backup_cost_overview.csv", dfBackupCostOverview_2)

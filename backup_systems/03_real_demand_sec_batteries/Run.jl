@@ -91,8 +91,8 @@ end
 
 
 @expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (GenX.backup_inv_cost_per_mwhyr(gen[y]) + GenX.backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y] * 0.293071) # 0.293071 MWh/MMBtu
-@expression(EP, eBackup_CReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_costs[GenX.fuel(gen[y])][2]) #removed the mean because prices constant
-@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * (1.43 * vBackup_emergency_purchase[t,y]) for t in 1:T))
+@expression(EP, eBackup_CReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_costs[GenX.fuel(gen[y])][2]) #- sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * vBackup_top_up[t,y] for t in 1:T)
+@expression(EP, eBackup_CVar[y in myinputs["SINGLE_FUEL"]], sum(myinputs["omega"][t] * (fuel_costs[GenX.fuel(gen[y])][t]) * (1.43 * vBackup_emergency_purchase[t,y]) for t in 1:T)) #+ vBackup_top_up[t,y], don't need this because cancels each other out!
 
 
 @expression(EP, eBackup_Total_CFix, sum(EP[:eBackup_CFix][y] for y in 1:G))
@@ -108,7 +108,7 @@ end
 @expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])]) #MMBtu * tCO2/MMBtu = tCO2
 @expression(EP, eBackup_Total_EReplacement, sum(EP[:eBackup_EReplacement][y] for y in 1:G))
 
-@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement]<=100000) #works
+@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement] <= 20000 ) #value.(myinputs["dfMaxCO2"])
 
 #EP[:cCO2Emissions_systemwide] += eBackup_Total_EReplacement
 
