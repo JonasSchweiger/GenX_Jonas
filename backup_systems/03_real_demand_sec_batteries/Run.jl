@@ -145,7 +145,8 @@ if has_values(EP)
         Technology = myinputs["RESOURCE_NAMES"][myinputs["SINGLE_FUEL"]],
         Backup_fuel_capacity_MMBtu = Vector(value.(vBackup_fuel_capacity)[axes(vBackup_fuel_capacity)[1]]),
         Volume_m3 = Vector(value.(eBackup_m3)[axes(eBackup_m3)[1]]),
-        Weight_kg = Vector(value.(eBackup_kg)[axes(eBackup_kg)[1]])
+        Weight_kg = Vector(value.(eBackup_kg)[axes(eBackup_kg)[1]]),
+        Emissions_tCO2 = Vector(value.(eBackup_EReplacement)[axes(eBackup_EReplacement)[1]])
  
     )
 
