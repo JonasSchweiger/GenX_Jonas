@@ -150,6 +150,18 @@ if has_values(EP)
  
     )
 
+    # Calculate the sum of each column
+    sum_row = DataFrame(
+        Technology = "Sum",
+        Backup_fuel_capacity_MMBtu = sum(dfBackupOverview.Backup_fuel_capacity_MMBtu),
+        Volume_m3 = sum(dfBackupOverview.Volume_m3),
+        Weight_kg = sum(dfBackupOverview.Weight_kg),
+        Emissions_tCO2 = sum(dfBackupOverview.Emissions_tCO2)
+    )
+
+    # Add the sum row to the DataFrame
+    dfBackupOverview = vcat(dfBackupOverview, sum_row) 
+
     dfBackupCost = DataFrame(
         CFix = value.(EP[:eBackup_Total_CFix]),
         CReplacement = value.(EP[:eBackup_Total_CReplacement]),
