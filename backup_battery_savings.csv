@@ -1,0 +1,16 @@
+Technology,Case,TotalCost
+MA_Diesel_Gen,MA_Diesel_Gen,119509.16102227308
+MA_Diesel_Gen,MA_Diesel_Gen + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS,119509.16102227308
+MA_Diesel_Gen,MA_Diesel_Gen + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS + MA_Primary_Al_Air_BESS,119509.16102227308
+MA_Biodiesel_Gen,MA_Biodiesel_Gen,137542.67207170566
+MA_Biodiesel_Gen,MA_Biodiesel_Gen + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS,137542.67207170557
+MA_Biodiesel_Gen,MA_Biodiesel_Gen + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS + MA_Primary_Al_Air_BESS,137542.67207170566
+MA_Methanol_FC,MA_Methanol_FC,465875.72858312976
+MA_Methanol_FC,MA_Methanol_FC + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS,209224.48900793586
+MA_Methanol_FC,MA_Methanol_FC + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS + MA_Primary_Al_Air_BESS,209224.48900793586
+MA_Hydrogen_FC,MA_Hydrogen_FC,385192.72876971826
+MA_Hydrogen_FC,MA_Hydrogen_FC + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS,209224.48900793586
+MA_Hydrogen_FC,MA_Hydrogen_FC + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS + MA_Primary_Al_Air_BESS,209224.48900793586
+MA_Ammonia_Gen,MA_Ammonia_Gen,163890.79399740958
+MA_Ammonia_Gen,MA_Ammonia_Gen + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS,163890.79399740964
+MA_Ammonia_Gen,MA_Ammonia_Gen + MA_Secondary_Li_Ion_BESS + MA_Secondary_Iron_Air_BESS + MA_Primary_Al_Air_BESS,163890.7939974096
