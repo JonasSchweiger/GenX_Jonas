@@ -21,11 +21,11 @@ end
 
 # Define the technologies
 technologies = [
-    "MA_Diesel_Gen"
-    #"MA_Biodiesel_Gen",
-    #"MA_Methanol_FC",
-    #"MA_Hydrogen_FC",
-    #"MA_Ammonia_Gen",
+    "MA_Diesel_Gen",
+    "MA_Biodiesel_Gen",
+    "MA_Methanol_FC",
+    "MA_Hydrogen_FC",
+    "MA_Ammonia_Gen",
 ]
 
 # Define the battery combinations
@@ -44,7 +44,16 @@ dfResults = DataFrame(
     BackupFuelCapacity = Float64[],
     BackupVolume = Float64[],
     BackupWeight = Float64[],
-    BackupEmissions = Float64[]
+    BackupEmissions = Float64[],
+    # Capacity columns for each technology
+    MA_Diesel_Gen = Float64[],
+    MA_Biodiesel_Gen = Float64[],
+    MA_Methanol_FC = Float64[],
+    MA_Hydrogen_FC = Float64[],
+    MA_Ammonia_Gen = Float64[],
+    MA_Primary_Al_Air_BESS = Float64[],
+    MA_Secondary_Li_Ion_BESS = Float64[],
+    MA_Secondary_Iron_Air_BESS = Float64[] 
 )
 
 # Iterate over the technologies
@@ -61,18 +70,31 @@ for tech in technologies
         dfCost = CSV.read("backup_systems/03_real_demand_sec_batteries/results/costs.csv", DataFrame)
         cTotal = dfCost[1, :Total]
 
-        # Read the AnnualSum from emissions.csv (first column only)
+        # Read the AnnualSum from emissions.csv 
         dfEmissions = CSV.read("backup_systems/03_real_demand_sec_batteries/results/emissions.csv", DataFrame)
         annualEmissions = dfEmissions[3, 2] 
 
         # Read backup overview data
         dfBackupOverview = CSV.read("backup_systems/03_real_demand_sec_batteries/results/backup_overview.csv", DataFrame)
         
-        # Extract values from the "Sum" row
+        # Extract values from the "Sum" row of backup_overview.csv
         backupFuelCapacity = dfBackupOverview[end, :Backup_fuel_capacity_MMBtu] 
         backupVolume = dfBackupOverview[end, :Volume_m3]
         backupWeight = dfBackupOverview[end, :Weight_kg]
         backupEmissions = dfBackupOverview[end, :Emissions_tCO2]
+
+        # Read capacity data
+        dfCapacity = CSV.read("backup_systems/03_real_demand_sec_batteries/results/capacity.csv", DataFrame)
+        
+        # Extract capacity values for each technology from capacity.csv
+        dieselCapacity = dfCapacity[dfCapacity.Resource .== "MA_Diesel_Gen", :EndCap][1]
+        biodieselCapacity = dfCapacity[dfCapacity.Resource .== "MA_Biodiesel_Gen", :EndCap][1]
+        methanolCapacity = dfCapacity[dfCapacity.Resource .== "MA_Methanol_FC", :EndCap][1]
+        hydrogenCapacity = dfCapacity[dfCapacity.Resource .== "MA_Hydrogen_FC", :EndCap][1]
+        ammoniaCapacity = dfCapacity[dfCapacity.Resource .== "MA_Ammonia_Gen", :EndCap][1]
+        primaryAlAirCapacity = dfCapacity[dfCapacity.Resource .== "MA_Primary_Al_Air_BESS", :EndCap][1]
+        secondaryLiIonCapacity = dfCapacity[dfCapacity.Resource .== "MA_Secondary_Li_Ion_BESS", :EndCap][1]
+        secondaryIronAirCapacity = dfCapacity[dfCapacity.Resource .== "MA_Secondary_Iron_Air_BESS", :EndCap][1]
 
         # Create a label for the current case
         case_label = join([tech; batteries], " + ")
@@ -86,7 +108,15 @@ for tech in technologies
             backupFuelCapacity,
             backupVolume,
             backupWeight,
-            backupEmissions
+            backupEmissions,
+            dieselCapacity,
+            biodieselCapacity,
+            methanolCapacity,
+            hydrogenCapacity,
+            ammoniaCapacity,
+            primaryAlAirCapacity,
+            secondaryLiIonCapacity,
+            secondaryIronAirCapacity
         ))
     end
 end
