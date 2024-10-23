@@ -64,7 +64,7 @@ fuel_costs = myinputs["fuel_costs"]
 omega = myinputs["omega"]
 fuel_CO2 = myinputs["fuel_CO2"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
-EMERGENCY_PURCHASE_TIME = 1:480:T
+EMERGENCY_PURCHASE_TIME = 1:193:T
 
 no_purchases = Int64[]
 for r in gen
@@ -108,7 +108,7 @@ end
 @expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])]) #MMBtu * tCO2/MMBtu = tCO2
 @expression(EP, eBackup_Total_EReplacement, sum(EP[:eBackup_EReplacement][y] for y in 1:G))
 
-@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement] <= 20000 ) #value.(myinputs["dfMaxCO2"])
+@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement] <= 500000 ) #value.(myinputs["dfMaxCO2"])
 
 #EP[:cCO2Emissions_systemwide] += eBackup_Total_EReplacement
 
