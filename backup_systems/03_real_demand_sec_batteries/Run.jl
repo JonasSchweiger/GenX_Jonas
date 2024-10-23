@@ -87,7 +87,7 @@ end
 @constraint(EP, [t in setdiff(1:T, EMERGENCY_PURCHASE_TIME), y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] == 0)
 @constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in no_purchases], vBackup_emergency_purchase[t,y] == 0)
 
-#@constraint(EP, myinputs["RESOURCES"]["MA_Methanol"][:Cap] >= 1) 
+#@constraint(EP, myinputs["RESOURCES"]["MA_Methanol_FC"][:Cap] <= 1)
 
 
 @expression(EP, eBackup_CFix[y in myinputs["SINGLE_FUEL"]], (GenX.backup_inv_cost_per_mwhyr(gen[y]) + GenX.backup_fixed_om_cost_per_mwhyr(gen[y])) * vBackup_fuel_capacity[y] * 0.293071) # 0.293071 MWh/MMBtu

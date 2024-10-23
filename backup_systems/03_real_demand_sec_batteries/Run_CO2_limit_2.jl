@@ -92,14 +92,14 @@ print(co2_start)
 print(co2_end)
 # --- Run the main loop with calculated CO2 limits ---
 if !isnothing(co2_start) && !isnothing(co2_end)
-    n_steps = 15  # Adjust this value to change the number of steps
+    n_steps = 20  # Adjust this value to change the number of steps
 
     # Calculate the step size
     step_size = (co2_start - co2_end) / (n_steps - 1)
 
     # Run Julia multiple times with different CO2 limits
     for i in 1:n_steps
-        # Calculate the CO2 limit for the current iteration
+        # Calculate the CO2 limit for the current iterationd
         co2_limit = co2_start - (i - 1) * step_size
 
         # Set the CO2 limit in the CO2_cap.csv file
