@@ -30,14 +30,14 @@ function read_capacity_csv(filename)
 end
 
 # ---  Specify the technology here ---
-technology = "MA_Methanol_FC" 
+technology = "MA_Secondary_Iron_Air_BESS" 
 # -----------------------------------
 
 # Create a DataFrame to store the results
 dfResults = DataFrame(Capacity_Constraint = Float64[], Capacity_Constraint_Dual = Float64[])
 
 # Define capacity constraint values
-capacity_constraints = range(0.1, stop=2, length=15)
+capacity_constraints = range(0.0, stop=0.1, length=15)
 
 # Iterate over the capacity constraints
 for capacity_constraint in capacity_constraints
