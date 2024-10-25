@@ -64,7 +64,7 @@ fuel_costs = myinputs["fuel_costs"]
 omega = myinputs["omega"]
 fuel_CO2 = myinputs["fuel_CO2"]
 END_SUBPERIODS = myinputs["START_SUBPERIODS"] .+ myinputs["hours_per_subperiod"] .-1
-EMERGENCY_PURCHASE_TIME = 1:193:T
+EMERGENCY_PURCHASE_TIME = 1:480:T
 
 no_purchases = Int64[]
 for r in gen
