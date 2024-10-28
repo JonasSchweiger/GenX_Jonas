@@ -26,6 +26,9 @@ technologies = [
     "MA_Methanol_FC",
     "MA_Hydrogen_FC",
     "MA_Ammonia_Gen",
+    "MA_Primary_Al_Air_BESS",
+    "MA_Secondary_Li_Ion_BESS",
+    "MA_Secondary_Iron_Air_BESS"
 ]
 
 # Define the battery combinations
