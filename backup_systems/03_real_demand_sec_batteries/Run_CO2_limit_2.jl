@@ -128,4 +128,4 @@ else
 end
 
 # Write the combined DataFrame to CSV
-CSV.write("backup_capacity_overview.csv", dfBackupCapacityOverview) 
+CSV.write("backup_capacity_overview.csv", dfBackupCapacityOverview)
