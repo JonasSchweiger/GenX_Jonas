@@ -4,6 +4,9 @@ using CSV
 using DataFrames
 using JuMP
 
+#Compare costs for true demand case for 5 clean fuels, clean fuel + secondary battery, clean fuel + sec + primary battery
+
+
 # Ensure that no CO2 limit
 df_co2_lim = CSV.read("backup_systems/03_real_demand_sec_batteries/policies/CO2_cap.csv", DataFrame)
 df_co2_lim[1, "CO_2_Cap_Zone_1"] = 0

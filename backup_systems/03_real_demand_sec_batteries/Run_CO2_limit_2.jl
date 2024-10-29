@@ -13,6 +13,11 @@ using JuMP
 using Plots
 using Statistics
 
+
+#Optimal technology mix depending on thightening CO2 limits (based on operating emissions!)
+#takes Diesel and Li-Ion battery as extreme CO2 values and does n steps in between
+
+
 # Sets all "Max_Cap_MW" entries to 0, except for the specified row
 function modify_thermal_csv(exception_row)
     df = CSV.read("backup_systems/03_real_demand_sec_batteries/resources/Thermal.csv", DataFrame)

@@ -13,6 +13,9 @@ using JuMP
 using Plots
 using Statistics
 
+# sensitivity analysis
+# set investment cost of one technology to zero, specify the name of this technology in the script below and run it
+
 # Function to modify Thermal.csv with a given capacity constraint and technology
 function modify_thermal_csv_all(capacity_constraint, technology)
     df = CSV.read("backup_systems/03_real_demand_sec_batteries/resources/Thermal.csv", DataFrame)

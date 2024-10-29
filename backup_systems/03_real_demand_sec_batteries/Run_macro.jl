@@ -13,6 +13,10 @@ using JuMP
 using Plots
 using Statistics
 
+# Cost structure for each technology 
+# Input the different demand cases (e.g. 1h outage only, 8h outage only etc.)
+# be careful with emergency purchases
+
 #ensure that no CO2 limit
 df_co2_lim = CSV.read("backup_systems/03_real_demand_sec_batteries/policies/CO2_cap.csv", DataFrame)
 
