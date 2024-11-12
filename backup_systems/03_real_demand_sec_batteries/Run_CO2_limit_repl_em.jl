@@ -74,23 +74,23 @@ end
 # --- Find co2_start ---
 # Set all "Max_Cap_MW" to 0 except for "MA_Diesel_Gen"
 initialize_co2_emissions()
-modify_thermal_csv("MA_Diesel_Gen") 
+#modify_thermal_csv("MA_Diesel_Gen") 
 
 # Run the model
-include("Run.jl")
+#include("Run.jl")
 
 # Get co2_start from emissions.csv
-co2_start = get_co2_emissions()
+co2_start = 47.711782030118 #get_co2_emissions()
 
 # --- Find co2_end ---
 # Set all "Max_Cap_MW" to 0 except for "MA_Secondary_Li_Ion_BESS"
-modify_thermal_csv("MA_Secondary_Li_Ion_BESS") 
+#modify_thermal_csv("MA_Secondary_Li_Ion_BESS") 
 
 # Run the model
-include("Run.jl")
+#include("Run.jl")
 
 # Get co2_end from emissions.csv
-co2_end = get_co2_emissions()
+co2_end = 0.832 #get_co2_emissions()
 dfBackupCapacityOverviewReplacement = DataFrame()
 modify_thermal_csv_value(-1) 
 
