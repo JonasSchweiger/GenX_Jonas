@@ -38,7 +38,7 @@ end
 dfResults_solar = DataFrame(Capacity_Constraint = Float64[], Overall_Cost = Float64[])
 
 # Define capacity constraint values
-capacity_constraints = range(0.0, stop=10, length=2)
+capacity_constraints = range(0.0, stop=117.707045, length=10)
 
 # Iterate over the capacity constraints
 for capacity_constraint in capacity_constraints
@@ -49,13 +49,15 @@ for capacity_constraint in capacity_constraints
     include("Run.jl")
 
     # Read the Capacity_Constraint_Dual value from capacity.csv
-    dfCost = CSV.read("backup_systems/03_real_demand_sec_batteries/results/costs.csv")
+    dfCost = CSV.read("backup_systems/03_real_demand_sec_batteries/results/costs.csv", DataFrame)
     
     # Extract dual value using filter and column selection
-    associated_cost = dfCost[1][1] 
+    associated_cost = dfCost[1,2]
+    dfCapacity = CSV.read("backup_systems/03_real_demand_sec_batteries/results/capacity.csv", DataFrame)
+    capacity_value = filter(:Resource => x -> x == "MA_solar_pv", dfCapacity)[:, :EndCap][1]
 
     # Add the results to the DataFrame
-    push!(dfResults_solar, [capacity_constraint, associated_cost])
+    push!(dfResults_solar, [capacity_value, associated_cost])
 end
 
 # Write the results to a CSV file
