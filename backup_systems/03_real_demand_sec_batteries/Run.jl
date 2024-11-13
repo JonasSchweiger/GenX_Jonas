@@ -88,7 +88,7 @@ end
 @constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t-1] + vBackup_emergency_purchase[t,y]) #vFuel is /billion BTU, watch out for factor 4!!
 @constraint(EP, [t in setdiff(1:T, EMERGENCY_PURCHASE_TIME), y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] == 0)
 @constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in no_purchases], vBackup_emergency_purchase[t,y] == 0)
-@constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] <= GenX.emergency_quantity_mmbtu(gen[y])*1000)
+@constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] <= GenX.emergency_quantity_mmbtu(gen[y]))
 
 #@constraint(EP, myinputs["RESOURCES"]["MA_Methanol_FC"][:Cap] <= 1)
 
@@ -111,7 +111,7 @@ end
 @expression(EP, eBackup_EReplacement[y in myinputs["SINGLE_FUEL"]], GenX.backup_replacement_factor(gen[y]) * vBackup_fuel_capacity[y] * fuel_CO2[GenX.fuel(gen[y])]) #MMBtu * tCO2/MMBtu = tCO2
 @expression(EP, eBackup_Total_EReplacement, sum(EP[:eBackup_EReplacement][y] for y in 1:G))
 
-@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement] <= GenX.emergency_quantity_mmbtu(gen[8])) # GenX.emergency_quantity_mmbtu(gen[8])) #value.(myinputs["dfMaxCO2"])
+@constraint(EP, cBackup_Total_Emissions, EP[:eBackup_Total_EReplacement] <= 20000) # GenX.emergency_quantity_mmbtu(gen[8])) #value.(myinputs["dfMaxCO2"])
 
 #EP[:cCO2Emissions_systemwide] += eBackup_Total_EReplacement
 
