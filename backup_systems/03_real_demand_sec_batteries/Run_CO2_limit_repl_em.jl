@@ -98,14 +98,14 @@ print(co2_start)
 print(co2_end)
 # --- Run the main loop with calculated CO2 limits ---
 if !isnothing(co2_start) && !isnothing(co2_end)
-    n_steps = 4  # Adjust this value to change the number of steps
+    n_steps = 20     # Adjust this value to change the number of steps
 
     # Calculate the step size
     step_size = (co2_start - co2_end) / (n_steps - 1)
 
     # Run Julia multiple times with different CO2 limits
     for i in 1:n_steps
-        # Calculate the CO2 limit for the current iterationd
+        # Calculate the CO2 limit for the current iteration
         co2_limit = co2_start - (i - 1) * step_size
 
         # Set the CO2 limit in the CO2_cap.csv file
@@ -113,18 +113,48 @@ if !isnothing(co2_start) && !isnothing(co2_end)
 
         include("Run.jl")
 
+        # --- Read data for dfBackupCapacityOverviewReplacement ---
 
         # Read the "backup_cost.csv" file
-    dfCapacity = CSV.read("backup_systems/03_real_demand_sec_batteries/results/capacity.csv", DataFrame)
+        dfCapacity = CSV.read("backup_systems/03_real_demand_sec_batteries/results/capacity.csv", DataFrame)
+
+        # Read "costs.csv" and extract "cTotal" value
+        dfCosts = CSV.read("backup_systems/03_real_demand_sec_batteries/results/costs.csv", DataFrame)
+        cTotal = dfCosts[1, :Total]
+    
+
+        # Read "backup_cost.csv" and extract "Backup_Emissions" from the first row
+        dfBackupCost_2 = CSV.read("backup_systems/03_real_demand_sec_batteries/results/backup_cost.csv", DataFrame)
+        backupEmissions = dfBackupCost_2[1, "Backup_Emissions"] 
+
+        # --- Create or update dfBackupCapacityOverviewReplacement ---
 
         if i == 1
-            # Extract the first two columns for the first iteration
-            global dfBackupCapacityOverviewReplacement = dfCapacity[:, [1,8]] 
-            #rename!(dfBackupCapacityOverview, :Total => :Iteration1)  # Rename the second column
+            # Extract the first two columns for the first iteration, renaming them
+            global dfBackupCapacityOverviewReplacement = dfCapacity[:, [:Resource, :EndCap]]
+            rename!(dfBackupCapacityOverviewReplacement, :Resource => :Column1, :EndCap => :Column2) 
+
+            # Add 'Backup_Emissions' as the first row
+            dfBackupCapacityOverviewReplacement = prepend!(dfBackupCapacityOverviewReplacement,  DataFrame(Symbol("Column1") => ["Backup_Emissions"], Symbol("Column2") => [backupEmissions]))
+
+            # Add 'cTotal' as the last row
+            dfBackupCapacityOverviewReplacement = append!(dfBackupCapacityOverviewReplacement, DataFrame(Symbol("Column1") => ["cTotal"], Symbol("Column2") => [cTotal]))
+
         else
-            # Extract only the eigth column for subsequent iterations
-            global dfBackupCapacityOverviewReplacement = hcat(dfBackupCapacityOverviewReplacement, dfCapacity[:, 8], makeunique=true)
-            #rename!(dfBackupCostOverview_2, :Total => Symbol("Iteration$i")) # Rename the new column
+            # Extract only the :EndCap column for subsequent iterations
+            temp_df = dfCapacity[:, [:EndCap]] 
+
+            # Rename the column to match dfBackupCapacityOverviewReplacement
+            rename!(temp_df, :EndCap => Symbol("Column$i"))
+
+            # Add 'Backup_Emissions' as the first row to temp_df
+            temp_df = prepend!(temp_df, DataFrame(Symbol("Column$i") => [backupEmissions]))
+
+            # Add 'cTotal' as the last row to temp_df
+            temp_df = append!(temp_df, DataFrame(Symbol("Column$i") => [cTotal]))
+
+            # Now you can concatenate (temp_df now has the correct number of rows)
+            global dfBackupCapacityOverviewReplacement = hcat(dfBackupCapacityOverviewReplacement, temp_df, makeunique=true)
         end
     end
 else
