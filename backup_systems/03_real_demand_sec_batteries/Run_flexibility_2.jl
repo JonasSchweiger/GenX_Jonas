@@ -74,8 +74,8 @@ initialize_resources_csv()
 
 
 # Define capacity constraint values
-flexibility_cap_constraints = range(0.0, stop=0.5, length=6)
-flexibility_time_constraints = (1,2,4,8,16,32)
+flexibility_cap_constraints = range(0.7, stop=0.8, length=2) #these are the critic parameters to tune on (do not use more than 3x6 =18 at same time for memory usage)
+flexibility_time_constraints = (1,2,4,8,16,32,64)
 
 
 # Iterate over the capacity constraints
