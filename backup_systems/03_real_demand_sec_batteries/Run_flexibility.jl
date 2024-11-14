@@ -46,6 +46,18 @@ function modify_flexibility_csv_value(cap_value)
     CSV.write("backup_systems/03_real_demand_sec_batteries/resources/Flex_demand.csv", df)
 end
 
+# Sets all "Max_Cap_MW" entries to the specified value
+function modify_flexibility_time_csv_value(time_value)
+    df = CSV.read("backup_systems/03_real_demand_sec_batteries/resources/Flex_demand.csv", DataFrame)
+
+    # Set all "Max_Cap_MW" values to cap_value
+    df[!, "Max_Flexible_Demand_Advance"] .= time_value
+    df[!, "Max_Flexible_Demand_Delay"] .= time_value
+
+    CSV.write("backup_systems/03_real_demand_sec_batteries/resources/Flex_demand.csv", df)
+end
+
+
 
 # Get CO2 emissions from backup_cost.csv
 function get_co2_emissions()
@@ -61,12 +73,15 @@ dfCapacityFlexibility = DataFrame()
 initialize_resources_csv()
 # modify the flexibility value here!!
 modify_flexibility_csv_value(0.2)
+modify_flexibility_time_csv_value(1)
 
 # Define capacity constraint values
-flexibility_time_constraints = range(0.0, stop=0.5, length=6)
+flexibility_cap_constraints = range(0.0, stop=0.5, length=6)
+flexibility_time_constraints = (1,2,4,8,16,32)
+
 
 # Iterate over the capacity constraints
-for flexibility_time_constraint in flexibility_time_constraints
+for flexibility_cap_constraint in flexibility_cap_constraints
     i = 2  # Initialize i to 2 since Column1 is already created
     # Modify Thermal.csv for the selected technology
     modify_flexibility_csv_value(flexibility_time_constraint)
@@ -88,7 +103,7 @@ for flexibility_time_constraint in flexibility_time_constraints
 
     # --- Create or update dfCapacityFlexibility ---
 
-    if flexibility_time_constraint == 0
+    if flexibility_cap_constraint == 0
         # Extract the first two columns for the first iteration, renaming them
         global dfCapacityFlexibility = dfCapacity[:, [:Resource, :EndCap]]
         rename!(dfCapacityFlexibility, :Resource => :Column1, :EndCap => :Column2) 
@@ -111,6 +126,7 @@ for flexibility_time_constraint in flexibility_time_constraints
 
         # Add 'cTotal' as the last row to temp_df
         temp_df = append!(temp_df, DataFrame(Symbol("Column$i") => [cTotal]))
+        temp_df = append!(temp_df, DataFrame(Symbol("Column$i") => [flexibility_time_constraint]))
 
         # Now you can concatenate (temp_df now has the correct number of rows)
         global dfCapacityFlexibility = hcat(dfCapacityFlexibility, temp_df, makeunique=true)
