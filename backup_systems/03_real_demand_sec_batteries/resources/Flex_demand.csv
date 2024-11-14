@@ -1,0 +1,2 @@
+Resource,Zone,MGA,Resource_Type,Max_Flexible_Demand_Advance,Max_Flexible_Demand_Delay,Flexible_Demand_Energy_Eff,Existing_Cap_MW,Cap_Size,Min_Cap_MW,Max_Cap_MW,New_Build,Can_Retire,Inv_Cost_Per_MWyr,Fixed_Om_Cost_Per_MWyr,Var_Om_Cost_Per_MWh,Var_Om_Cost_Per_MWh_In,backup_emergency_purchase,Heat_Rate_Mmbtu_Per_MWh,Region,Cluster
+MA_electricity_load_shifting,1,1,electricity_load_shifting,4,4,1,0.5,0,0,0,0,0,0,0,0,0,0,0,MA,1

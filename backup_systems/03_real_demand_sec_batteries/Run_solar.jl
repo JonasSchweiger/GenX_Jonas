@@ -38,7 +38,7 @@ end
 dfResults_solar = DataFrame(Capacity_Constraint = Float64[], Overall_Cost = Float64[])
 
 # Define capacity constraint values
-capacity_constraints = range(0.0, stop=117.707045, length=10)
+capacity_constraints = range(0.0, stop=2.5, length=6)
 
 # Iterate over the capacity constraints
 for capacity_constraint in capacity_constraints
