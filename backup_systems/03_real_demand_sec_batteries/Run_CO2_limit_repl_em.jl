@@ -80,7 +80,7 @@ initialize_co2_emissions()
 #include("Run.jl")
 
 # Get co2_start from emissions.csv
-co2_start = 47.711782030118 #get_co2_emissions()
+co2_start = 210.6065358 #get_co2_emissions()
 
 # --- Find co2_end ---
 # Set all "Max_Cap_MW" to 0 except for "MA_Secondary_Li_Ion_BESS"
@@ -90,7 +90,7 @@ co2_start = 47.711782030118 #get_co2_emissions()
 #include("Run.jl")
 
 # Get co2_end from emissions.csv
-co2_end = 0.832 #get_co2_emissions()
+co2_end = 0.832298926 #get_co2_emissions()
 dfBackupCapacityOverviewReplacement = DataFrame()
 modify_thermal_csv_value(-1) 
 
@@ -101,12 +101,16 @@ if !isnothing(co2_start) && !isnothing(co2_end)
     n_steps = 20     # Adjust this value to change the number of steps
 
     # Calculate the step size
-    step_size = (co2_start - co2_end) / (n_steps - 1)
-
+    #step_size = (co2_start - co2_end) / (n_steps - 1)
+    #predifined_co2_limits = [210.6065, 199.5658, 168.525, 177.4643, 166.4435, 155.4026, 144.362, 133.3313, 122.2005, 111.2398, 100.199, 89.15829, 78.11754, 67.07679, 56.03605, 44.9953, 33.95455, 22.9138, 11.87305, 9.112661, 6.311205, 6.352674, 3.592486, 1.361944, 0.832299]
+    #predifined_co2_limits = [210.6065, 199.5658, 168.525, 177.4643, 166.4435, 155.4026, 144.362, 133.3313, 122.2005, 111.2398, 100.199, 89.15829, 78.11754]
+    #predifined_co2_limits = [67.07679, 56.03605, 44.9953, 33.95455, 22.9138, 11.87305, 9.112661, 6.311205, 6.352674, 3.592486, 1.361944, 0.832299]
+    predifined_co2_limits = [122.2005, 111.2398, 100.199, 89.15829, 78.11754, 67.07679, 56.03605, 44.9953, 33.95455, 22.9138, 11.87305, 9.112661, 6.311205, 6.352674, 3.592486, 1.361944, 0.832299]
     # Run Julia multiple times with different CO2 limits
-    for i in 1:n_steps
+    for (i,co2_limit) in enumerate(predifined_co2_limits)
+        #for i in 1:n_steps
         # Calculate the CO2 limit for the current iteration
-        co2_limit = co2_start - (i - 1) * step_size
+        #co2_limit = co2_start - (i - 1) * step_size
 
         # Set the CO2 limit in the CO2_cap.csv file
         modify_co2_cap_csv(co2_limit)
@@ -156,6 +160,7 @@ if !isnothing(co2_start) && !isnothing(co2_end)
             # Now you can concatenate (temp_df now has the correct number of rows)
             global dfBackupCapacityOverviewReplacement = hcat(dfBackupCapacityOverviewReplacement, temp_df, makeunique=true)
         end
+        println("Run ", i, " completed with CO2 limit: ", co2_limit)
     end
 else
     @error "Could not determine co2_start or co2_end. Check the emissions.csv file and Thermal.csv file."
