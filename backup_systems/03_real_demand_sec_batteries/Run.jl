@@ -72,8 +72,7 @@ EMERGENCY_PURCHASE_TIME = 1:480:T
 #Constraint on replacement emissions
 #Is solar switched on/off
 #is demand flexibility on/ off
-#watch out: twice times less the replacement rate!!
-
+#fuel purchase factor: watch out if 1.43 of customized!!
 
 no_purchases = Int64[]
 for r in gen
@@ -95,7 +94,7 @@ end
 @constraint(EP, [t in myinputs["INTERIOR_SUBPERIODS"], y in myinputs["SINGLE_FUEL"]], vBackup_fuel_level[t,y] == vBackup_fuel_level[t-1,y] - EP[:vFuel][y,t-1] + vBackup_emergency_purchase[t,y]) #vFuel is /billion BTU, watch out for factor 4!!
 @constraint(EP, [t in setdiff(1:T, EMERGENCY_PURCHASE_TIME), y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] == 0)
 @constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in no_purchases], vBackup_emergency_purchase[t,y] == 0)
-@constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] <= GenX.emergency_quantity_mmbtu(gen[y]))
+#@constraint(EP, [t in EMERGENCY_PURCHASE_TIME, y in myinputs["SINGLE_FUEL"]], vBackup_emergency_purchase[t,y] <= GenX.emergency_quantity_mmbtu(gen[y]))
 
 #@constraint(EP, myinputs["RESOURCES"]["MA_Methanol_FC"][:Cap] <= 1)
 
