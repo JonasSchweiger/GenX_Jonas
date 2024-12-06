@@ -15,6 +15,8 @@ using Statistics
 pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
+#first case with real demand
+#doesn't have constrained emergency purchases
 
 
 case = dirname(@__FILE__)

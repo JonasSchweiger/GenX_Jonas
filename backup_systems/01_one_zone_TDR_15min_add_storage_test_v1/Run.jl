@@ -16,6 +16,10 @@ pyplot()
 
 #run_genx_case!(dirname(@__FILE__), Gurobi.Optimizer)
 
+#here we added storage techs
+#modeling is still 15min interval
+#lack of constrained purchase
+#be careful with emergency purchase time
 
 case = dirname(@__FILE__)
 optimizer =  Gurobi.Optimizer
