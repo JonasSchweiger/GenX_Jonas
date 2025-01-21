@@ -38,7 +38,7 @@ if mysetup["TimeDomainReduction"] == 1
     end
 end
 
-### Configure solver and test github2
+### Configure solver and test github3
 println("Configuring Solver")
 OPTIMIZER = configure_solver(settings_path, optimizer)
 
